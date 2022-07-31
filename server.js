@@ -77,20 +77,20 @@ app.get('/callback',(req,res)=>{
     })
       .then(response => {
         if(response.status === 200){
-          const {refresh_token } = response.data;
+          console.log(response.data);
+          const {access_token, refresh_token} = response.data;
 
-        axios.get(`http://localhost:8888/refresh_token?refresh_token=${refresh_token}`)
-          .then(response => {
-            res.send(`<pre>${JSON.stringify(response.data, null, 2)}</pre>`);
+          const queryParams  =querystring.stringify({
+            access_token,
+            refresh_token,
           })
-          .catch(error => {
-            res.send(error);
-          });
-        }else{
-          res.send(response);
-        }
+          //redirect to react app and pass along tokens and query params
+          res.redirect(`http://localhost:3000/?${queryParams}`)
         
-      })
+      }else{
+        res.redirect(`?${querystring.stringify({ error: 'invalid_token'})}`);
+      }
+    })
       .catch(error => {
         res.send(error);
       });
