@@ -40,28 +40,21 @@ app.get('/login',(req,res)=>{
     const state = generateRandomString(16);
     res.cookie(stateKey,state);
 
-    const scopes = [
-        'user-read-email',
-        'user-read-private',
-        'playlist-read-collaborative',
-        'playlist-read-private',
-        'user-library-read',
-        'user-top-read',    
-        'user-read-recently-played',
-        'user-follow-read',
-    ].join(' ');
+    const scope =
+    'user-read-private user-read-email user-read-recently-played user-top-read user-follow-read user-follow-modify playlist-read-private playlist-read-collaborative playlist-modify-public';
 
     const queryParams = querystring.stringify({
         client_id : CLIENT_ID,
         response_type : 'code',
         redirect_uri :REDIRECT_URI,
-        state: state
+        state: state,
+        scope: scope
     })
     res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
 })
 app.get('/callback',(req,res)=>{
     const code = req.query.code || null;
-
+  console.log(code);
     axios({
       method: 'post',
       url: 'https://accounts.spotify.com/api/token',
@@ -77,14 +70,14 @@ app.get('/callback',(req,res)=>{
     })
       .then(response => {
         if(response.status === 200){
-          console.log(response.data);
-          const {access_token, refresh_token} = response.data;
+
+          const {access_token, refresh_token, token_type} = response.data;
 
           const queryParams  =querystring.stringify({
             access_token,
             refresh_token,
           })
-          //redirect to react app and pass along tokens and query params
+          // redirect to react app and pass along tokens and query params
           res.redirect(`http://localhost:3000/?${queryParams}`)
         
       }else{

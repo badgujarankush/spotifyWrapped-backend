@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const LOCALSTORAGE_KEYS = {
   accessToken: 'spotify_access_token',
   refreshToken: 'spotify_refresh_token',
@@ -20,32 +20,23 @@ export const logout = () => {
   for (const property in LOCALSTORAGE_KEYS) {
     window.localStorage.removeItem(LOCALSTORAGE_KEYS[property]);
   }
-  window.location = window.location.origin;
-//   return;
+  window.location = window.location.reload();
+  return;
 };
 
 const refreshToken = async () => {
   try {
-    if (!LOCALSTORAGE_VALUES.refreshToken ||
-        LOCALSTORAGE_VALUES.refreshToken === 'undefined' ||
-        (Date.now() - Number(LOCALSTORAGE_VALUES.timestamp) / 1000) < 1000
-      ) {
-        console.error('No refresh token available');
-        logout();
-      }
-  
-     //use refresh token from our node app
     const { data } = await axios.get(
       `/refresh_token?refresh_token=${LOCALSTORAGE_VALUES.refreshToken}`,
     );
-    const { access_token,refresh_token } = data;
+    const { access_token } = data;
     // Update localStorage values
     window.localStorage.setItem(LOCALSTORAGE_KEYS.accessToken, access_token);
     window.localStorage.setItem(LOCALSTORAGE_KEYS.timeStamp, Date.now());
-    window.localStorage.setItem(LOCALSTORAGE_KEYS.refreshToken,refresh_token);
+
     // Reload the page for localStorage updates to be reflected
     window.location.reload();
-    // return;
+    return;
   } catch (e) {
     console.error(e);
   }
@@ -82,3 +73,34 @@ const getAccessToken = () => {
 };
 
 export const accessToken = getAccessToken();
+
+// const spotifyApiHeaders = {
+//   'Authorization' : `Bearer ${accessToken}`,
+//   'Content-Type': 'application/json',
+// };
+// const createRequest = (url) => ({ url, headers: spotifyApiHeaders });
+
+// export const spotifyApi = createApi({
+//   reducerPath: "spotifyApi",
+//   baseQuery: fetchBaseQuery({ baseUrl: "https://api.spotify.com/v1" }),
+//   mode: "no-cors",
+//   endpoints: (builder) => ({
+//     getUser: builder.query({
+//       query: () => createRequest(`/me`),
+//     }),
+//     getUserPlaylist: builder.query({
+//       query: (user_id) => createRequest(`/users/${user_id}/playlists`)
+//     }),
+//     getTopArtists: builder.query({
+//       query: ({limit,offset,range}) =>createRequest(`/me/top/artists?limit=${limit}&offset=${offset}&time_range=${range}`)
+//     }),
+//     getTopSongs: builder.query({
+//       query: ({limit,offset,range}) =>createRequest(`/me/top/tracks?limit=${limit}&offset=${offset}&time_range=${range}`)
+//     }),
+//     getRecentlyPlayed: builder.query({
+//       query: (limit) =>createRequest(`/me/player/recently-played?limit=${limit}`)
+//     })
+//   }),
+// });
+
+// export const {useGetUserQuery,useGetUserPlaylistQuery, useGetTopArtistsQuery, useGetTopSongsQuery,useGetRecentlyPlayedQuery}  = spotifyApi;
