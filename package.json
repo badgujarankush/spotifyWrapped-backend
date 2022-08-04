@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "engines":{
+    "node": "14.17.0"
+  },
+  "cacheDirectories":[
+    "node_modules", "client/node_modules"
+  ],
   "dependencies": {
     "axios": "^0.27.2",
     "concurrently": "^7.3.0",
@@ -18,7 +24,9 @@
     "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "server": "nodemon server.js",
     "client": "cd client && npm start",
-    "postinstall": "cd client && npm install"
+    "postinstall": "cd client && npm install",
+    "build": "NODE_ENV=production cd client/ && npm install && npm run build",
+    "start-server": "node server.js"
   },
   "keywords": [],
   "author": "",

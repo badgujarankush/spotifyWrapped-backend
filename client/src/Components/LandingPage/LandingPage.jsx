@@ -1,10 +1,14 @@
 import React from 'react'
 import logo from '../../Images/logos_spotify-icon.png';
-// import logo from '../../Images/spotify-logo.svg';
 import background from '../../Images/background.png';
 import '../LandingPage/LandingPage.css';
-// import {loginURL} from '../../Api/spotify';
+
+const LOGIN_URI =
+  process.env.NODE_ENV !== 'production'
+    ? 'http://localhost:8888/login'
+    : 'https://spotwrap.herokuapp.com/login';
 const LandingPage = () => {
+  
   return (
     <div className='landing-page'>
       <div className='title'>
@@ -15,7 +19,7 @@ const LandingPage = () => {
         <img src={background} alt='drop'/>
         <div className='description'><h1>Find your <br></br><span>TOP</span><br></br>ARTISTS.<br></br>SONGS.</h1>
         <p>Dont need to wait for year-end to find your wrapped up. Get your spotify wrapped <span>now</span></p>
-        <a href={'http://localhost:8888/login'}>Continue with Spotify</a></div>
+        <a href={LOGIN_URI}>Continue with Spotify</a></div>
         
       </div>
     </div>

@@ -7,7 +7,7 @@ require("dotenv").config();
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 let REDIRECT_URI = process.env.REDIRECT_URI;
-let FRONTEND_URI = "http://localhost:3000";
+let FRONTEND_URI = process.env.FRONTEND_URI;
 const PORT = process.env.PORT || 8888;
 
 // package requirements
@@ -16,6 +16,7 @@ const request = require("request");
 const querystring = require("querystring");
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
+const path = require("path");
 
 // const app = express();
 
@@ -55,6 +56,9 @@ if (cluster.isMaster) {
   });
 }else{
   const app = express();
+
+  // Priority serve any static files.
+  app.use(express.static(path.resolve(__dirname, './client/build')));
 
  // your application requests authorization 
 app.get("/login", function (req, res) {
@@ -142,6 +146,11 @@ app.get("/refresh_token", function (req, res) {
       res.send({ access_token });
     }
   });
+});
+
+// All remaining requests return the React app, so it can handle routing.
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './client/build', 'index.html'));
 });
 
 app.listen(PORT, function () {
