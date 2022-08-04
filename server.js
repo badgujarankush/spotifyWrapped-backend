@@ -14,8 +14,10 @@ const PORT = process.env.PORT || 8888;
 const express = require("express");
 const request = require("request");
 const querystring = require("querystring");
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
 
-const app = express();
+// const app = express();
 
 // This piece of code is required to generate random string
 // which is used to generate secret token from login endpoint during authorization
@@ -37,6 +39,22 @@ const generateRandomString = (length) => {
 
 const stateKey = "spotify_auth_state";  // tells the state/requirement at endpoint
 
+// Multi-process to utilize all CPU cores.
+if (cluster.isMaster) {
+  console.warn(`Node cluster master ${process.pid} is running`);
+
+  // Fork workers.
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.error(
+      `Node cluster worker ${worker.process.pid} exited: code ${code}, signal ${signal}`,
+    );
+  });
+}else{
+  const app = express();
 
  // your application requests authorization 
 app.get("/login", function (req, res) {
@@ -129,3 +147,4 @@ app.get("/refresh_token", function (req, res) {
 app.listen(PORT, function () {
   console.warn(`listening on port ${PORT}`);
 });
+}
