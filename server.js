@@ -60,6 +60,9 @@ if (cluster.isMaster) {
   // Priority serve any static files.
   app.use(express.static(path.resolve(__dirname, './client/build')));
 
+  app.get('/',function(req,res){
+    res.send("hello");
+  })
  // your application requests authorization 
 app.get("/login", function (req, res) {
   const state = generateRandomString(16);
