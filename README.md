@@ -4,12 +4,13 @@ and Playlists
 
 
 # PREVIEW
-![project-image](/client/src/Images/Dashboard.png)
-![project-image](/client/src/Images/Top%20Artists.png)
-![project-image](/client/src/Images/Top%20Songs.png)
-![project-image](/client/src/Images/Favourite%20Genres.png)
-![project-image](/client/src/Images/Recently%20Played.png)
-![project-image](/client/src/Images/Landing%20Page.png)
+![project-image](/Demo/Dashboard.png)
+![project-image](/Demo/Top%20Artists.png)
+![project-image](/Demo/Top%20Songs.png)
+![project-image](/Demo/Favourite%20Genres.png)
+![project-image](/Demo/Recently%20Played.png)
+![project-image](/Demo/Landing%20Page.png)
+
 
 
 
